@@ -1,11 +1,11 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from employee_information.models import Department, Position, Employees
+from employee_information.models import Department, Position, Employee
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 import json
-employees = [
+employee = [
 
     {
         'code':1,
@@ -51,10 +51,10 @@ def logoutuser(request):
 def home(request):
     context = {
         'page_title':'Home',
-        'employees':employees,
+        'employee':employee,
         'total_department':len(Department.objects.all()),
         'total_position':len(Position.objects.all()),
-        'total_employee':len(Employees.objects.all()),
+        'total_employee':len(Employee.objects.all()),
     }
     return render(request, 'employee_information/home.html',context)
 
@@ -67,15 +67,15 @@ def about(request):
 
 # Departments
 @login_required
-def departments(request):
+def department(request):
     department_list = Department.objects.all()
     context = {
-        'page_title':'Departments',
-        'departments':department_list,
+        'page_title':'Department',
+        'department':department_list,
     }
-    return render(request, 'employee_information/departments.html',context)
+    return render(request, 'employee_information/department.html',context)
 @login_required
-def manage_departments(request):
+def manage_department(request):
     department = {}
     if request.method == 'GET':
         data =  request.GET
@@ -118,15 +118,15 @@ def delete_department(request):
 
 # Positions
 @login_required
-def positions(request):
+def position(request):
     position_list = Position.objects.all()
     context = {
-        'page_title':'Positions',
-        'positions':position_list,
+        'page_title':'Position',
+        'position':position_list,
     }
-    return render(request, 'employee_information/positions.html',context)
+    return render(request, 'employee_information/position.html',context)
 @login_required
-def manage_positions(request):
+def manage_position(request):
     position = {}
     if request.method == 'GET':
         data =  request.GET
@@ -169,18 +169,18 @@ def delete_position(request):
 
 @login_required
 # Employees
-def employees(request):
+def employee(request):
     employee_list = Employees.objects.all()
     context = {
-        'page_title':'Employees',
-        'employees':employee_list,
+        'page_title':'Employee',
+        'employee':employee_list,
     }
-    return render(request, 'employee_information/employees.html',context)
+    return render(request, 'employee_information/employee.html',context)
 @login_required
-def manage_employees(request):
+def manage_employee(request):
     employee = {}
-    departments = Department.objects.filter(status = 1).all() 
-    positions = Position.objects.filter(status = 1).all() 
+    department = Department.objects.filter(status = 1).all() 
+    position = Position.objects.filter(status = 1).all() 
     if request.method == 'GET':
         data =  request.GET
         id = ''
@@ -190,8 +190,8 @@ def manage_employees(request):
             employee = Employees.objects.filter(id=id).first()
     context = {
         'employee' : employee,
-        'departments' : departments,
-        'positions' : positions
+        'department' : department,
+        'position' : position
     }
     return render(request, 'employee_information/manage_employee.html',context)
 
@@ -199,10 +199,10 @@ def manage_employees(request):
 def save_employee(request):
     data =  request.POST
     resp = {'status':'failed'}
-    if (data['firstname']) :
-        check  = Employees.objects.filter(firstname = data['firstname'])
+    if (data['fname']) :
+        check  = Employee.objects.filter(fname = data['fname'])
     else:
-        check  = Employees.objects.filter(lastname = data['lastname'])
+        check  = Employee.objects.filter(lname = data['lname'])
 
     if len(check) == '':
         resp['status'] = 'failed'
@@ -212,9 +212,9 @@ def save_employee(request):
             dept = Department.objects.filter(id=data['department_id']).first()
             pos = Position.objects.filter(id=data['position_id']).first()
             if (data['id']).isnumeric() and int(data['id']) > 0 :
-                save_employee = Employees.objects.filter(id = data['id']).update( firstname = data['firstname'],lastname = data['lastname'],gender = data['gender'],contact = data['contact'],address = data['address'],department_id = dept,position_id = pos,date_hired = data['date_hired'],status = data['status'])
+                save_employee = Employee.objects.filter(id = data['id']).update( fname = data['fname'],lastname = data['lname'],gender = data['gender'],contact = data['contact'],address = data['address'],department_id = dept,position_id = pos,date_hired = data['date_hired'],status = data['status'])
             else:
-                save_employee = Employees(firstname = data['firstname'],lastname = data['lastname'],gender = data['gender'],contact = data['contact'],address = data['address'],department_id = dept,position_id = pos,date_hired = data['date_hired'],status = data['status'])
+                save_employee = Employee(fname = data['fname'],lastname = data['lname'],gender = data['gender'],contact = data['contact'],address = data['address'],department_id = dept,position_id = pos,date_hired = data['date_hired'],status = data['status'])
                 save_employee.save()
             resp['status'] = 'success'
         except Exception:
@@ -245,7 +245,7 @@ def view_employee(request):
         if 'id' in data:
             id= data['id']
         if id.isnumeric() and int(id) > 0:
-            employee = Employees.objects.filter(id=id).first()
+            employee = Employee.objects.filter(id=id).first()
     context = {
         'employee' : employee,
         'departments' : departments,
