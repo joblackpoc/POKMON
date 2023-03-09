@@ -10,7 +10,7 @@
             <dl>
 
                 <dt class="mdc-typography mdc-theme--primary">Fullname</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.firstname }}  {{ employee.lastname }}</dd>
+                <dd class="ps-3 fw-bolder">{{ employee.fname }}  {{ employee.lname }}</dd>
                 <dt class="mdc-typography mdc-theme--primary">Gender</dt>
                 <dd class="ps-3 fw-bolder">{{ employee.gender }}</dd>
 
@@ -28,7 +28,7 @@
                 <dt class="mdc-typography mdc-theme--primary">Position</dt>
                 <dd class="ps-3 fw-bolder">{{ employee.position_id }}</dd>
                 <dt class="mdc-typography mdc-theme--primary">Date Active</dt>
-                <dd class="ps-3 fw-bolder">{{ employee.date_hired|date:'M d, Y' }}</dd>
+                <dd class="ps-3 fw-bolder">{{ employee.date_created|date:'M d, Y' }}</dd>
 
                 <dt class="mdc-typography mdc-theme--primary">Status</dt>
                 <dd class="ps-3 fw-bolder">

@@ -2,10 +2,9 @@ from datetime import datetime
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from phonenumber_field.modelfields import PhoneNumberField
+from phone_field import PhoneField
 
 # Create your models here.
-
 
 class District(models.Model):
     name = models.CharField(max_length=100)
@@ -24,7 +23,7 @@ class SubDistrict(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.name +' - ' + self.district
 
 class Village(models.Model):
     name = models.CharField(max_length=100)
@@ -34,11 +33,24 @@ class Village(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.name + ' - ' + self.subdistrict
 
 class Department(models.Model):
     
     name = models.CharField(max_length=200)
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    subdistrict = models.ForeignKey(SubDistrict, on_delete=models.CASCADE)
+    description = models.TextField()
+    status = models.IntegerField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name + ' - '+self.subdistrict+' - '+self.district
+    
+class Group(models.Model):
+
+    name = models.CharField(max_length=100)
     description = models.TextField()
     status = models.IntegerField()
     date_created = models.DateTimeField(auto_now_add=True)
@@ -51,6 +63,7 @@ class Position(models.Model):
     
     name = models.CharField(max_length=200)
     description = models.TextField()
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     status = models.IntegerField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -58,19 +71,18 @@ class Position(models.Model):
     def __str__(self):
         return self.name
 
-
 class Employee(models.Model):
 
-    firstname = models.CharField(max_length=200,) 
-    lastname = models.CharField(max_length=200,) 
-    gender = models.CharField(max_length=20) 
+    fname = models.CharField(max_length=200,) 
+    lname = models.CharField(max_length=200,) 
+    gender = models.CharField(max_length=10) 
     address = models.TextField() 
     position = models.ForeignKey(Position, on_delete=models.CASCADE) 
     date_hired = models.DateField() 
     status = models.IntegerField() 
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     subdistrict = models.ForeignKey(SubDistrict, on_delete=models.CASCADE)
-    phone_number = PhoneNumberField()
+    phone_number = PhoneField(blank=True, help_text='Contact phone number')
     department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -78,7 +90,7 @@ class Employee(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.firstname + ' - '+self.lastname + ' '
+        return self.fname + ' - '+self.lname + ' - '+ str(self.phone_number)
 
 class Job(models.Model):
     name = models.CharField(max_length=100)
@@ -111,7 +123,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     fname = models.CharField(max_length=155)
     lname = models.CharField(max_length=155)
-    phone_number = PhoneNumberField()
+    phone_number = PhoneField(blank=True, help_text='Contact phone number')
     address = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     mister_pop = models.BooleanField(default=False)
@@ -120,4 +132,4 @@ class UserProfile(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.fname + ' - ' + self.lname +' - '+ str(self.phone_number)

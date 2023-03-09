@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'employee_information.apps.EmployeeInformationConfig',
     'django.contrib.humanize',
-    'phonenumber_field',
+    'phone_field',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ems.urls'
+
 
 TEMPLATES = [
     {
